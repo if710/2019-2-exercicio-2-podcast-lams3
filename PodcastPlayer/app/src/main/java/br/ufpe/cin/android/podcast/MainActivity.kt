@@ -14,12 +14,16 @@ class MainActivity : AppCompatActivity() {
 
     private val xmlLink = "https://s3-us-west-1.amazonaws.com/podcasts.thepolyglotdeveloper.com/podcast.xml"
 
+    private lateinit var itemFeedDatabase: ItemFeedDatabase
     private var itemFeeds: MutableList<ItemFeed> = mutableListOf()
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Requisitando instancia da Database
+        itemFeedDatabase = ItemFeedDatabase.getInstance(this)
 
         // Atribuindo o Adapter implementado, assim como um LinearLayoutManager ao RecyclerView
         recyclerView = layoutRecyclerView
@@ -33,16 +37,23 @@ class MainActivity : AppCompatActivity() {
                 val xmlText = URL(xmlLink).readText()
 
                 // Parse do XML
-                val xmlItems = Parser.parse(xmlText)
+                val xmlItems = Parser.parse(xmlText).toTypedArray()
 
-                itemFeeds.addAll(xmlItems)
+                // Atualiza base de dados
+                itemFeedDatabase.itemFeedDao().insert(*xmlItems)
+            } catch (exception: Exception) {
+                Log.d("DEBUG", exception.toString())
+            } finally {
+                // Atualiza copia local
+                val allItems = itemFeedDatabase.itemFeedDao().getAll()
+                itemFeeds.addAll(allItems)
+
+                Log.d("DEBUG", allItems.size.toString())
 
                 // Atualiza a RecyclerView na thread principal
                 runOnUiThread {
                     (recyclerView.adapter as ItemFeedAdapter).notifyDataSetChanged()
                 }
-            } catch (exception: Exception) {
-                Log.d("DEBUG", exception.toString())
             }
         }
     }
