@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">PodcastPlayer</string>
     <string name="action_download">Listen Now!</string>
+    <string name="generic_title">Title</string>
+    <string name="generic_description">Description</string>
 </resources>

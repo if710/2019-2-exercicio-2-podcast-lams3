@@ -28,11 +28,21 @@ class ItemFeedAdapter (private val itemFeeds: List<ItemFeed>, private val contex
     class ViewHolder(val view : View) : RecyclerView.ViewHolder(view) {
         private var itemFeed: ItemFeed = ItemFeed("", "", "", "", "")
 
-        // Atualiza a view com as informacoes do novo ItemFeed
         fun setItemFeed(newItemFeed: ItemFeed) {
             itemFeed = newItemFeed
+
+            // Atualiza a view com as informacoes do novo ItemFeed
             view.item_title.text = itemFeed.title
             view.item_date.text = itemFeed.pubDate
+
+            // Abre nova Activity ao clickar na view
+            view.setOnClickListener {
+                val intent = Intent(view.context, EpisodeDetailActivity::class.java)
+                intent.putExtra(Messages.ITEMFEED_EXTRA, itemFeed)
+                startActivity(view.context, intent, null)
+            }
+
+            // Download ao clickar no botao
             view.item_action.setOnClickListener {
                 val url = itemFeed.downloadLink
                 val intent = Intent(Intent.ACTION_VIEW)
