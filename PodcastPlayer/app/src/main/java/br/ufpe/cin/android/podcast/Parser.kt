@@ -117,7 +117,11 @@ object Parser {
                 skip(parser)
             }
         }
-        return ItemFeed(title!!, link!!, pubDate!!, description!!, "carregar o link")
+
+        // No XML escolhido o link já é o de download
+        val downloadLink = link
+
+        return ItemFeed(title!!, link!!, pubDate!!, description!!, downloadLink!!)
     }
 
     // Processa tags de forma parametrizada no feed.
